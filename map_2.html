@@ -82,17 +82,19 @@ function initialize(position) {
 
   var mapProp = {
     center:myCenter,
-    zoom:14,
+    zoom:15,
     mapTypeId:google.maps.MapTypeId.ROADMAP,
     zoomControl: false
   };
 
   var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
   map.setOptions({draggable: false, zoomControl: false, scrollwheel: false, disableDoubleClickZoom: true});
+  // need to combine setOptions with mapProp
 
   var marker=new google.maps.Marker({
     position:myCenter,
     icon:'pinkball.png'
+    //icon:'safe_image.png'
   });
 /*  var marker1=new google.maps.Marker({
     position:myPos1,
@@ -105,7 +107,13 @@ function initialize(position) {
   //marker1.setMap(map);
   marker2.setMap(map);
 
+  console.log("getBounds"+map.getBounds);
 
+
+  var bounds = new google.maps.LatLngBounds();
+  bounds.extend(myCenter);
+  bounds.extend(myPos2);
+  map.fitBounds(bounds);
 
 }
 
