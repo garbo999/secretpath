@@ -37,6 +37,18 @@ var position_array = [
 ];
 
 
+if (typeof(Number.prototype.toRad) === "undefined") {
+  Number.prototype.toRad = function() {
+    return this * Math.PI / 180;
+  }
+}
+
+if (typeof(Number.prototype.toDeg) === "undefined") {
+  Number.prototype.toDeg = function() {
+    return this * 180 / Math.PI;
+  }
+}
+
 /**
  * Returns a random integer between min (inclusive) and max (inclusive)
  * Using Math.round() will give you a non-uniform distribution!
@@ -144,22 +156,61 @@ function initialize(position) {
   map.setOptions({draggable: false, zoomControl: false, scrollwheel: false, disableDoubleClickZoom: true});
   // need to combine setOptions with mapProp
 
-  var marker=new google.maps.Marker({
+/*  var marker=new google.maps.Marker({
     position:myCenter,
     icon:'pinkball.png'
     //icon:'safe_image.png'
   });
-  var marker1=new google.maps.Marker({
+*/  var marker1=new google.maps.Marker({
     position:myPos2,
   });
 
-  marker.setMap(map);
+  //marker.setMap(map);
   marker1.setMap(map);
 
   var bounds = new google.maps.LatLngBounds();
   bounds.extend(myCenter);
   bounds.extend(myPos2);
   map.fitBounds(bounds);
+
+
+  lat1 = my_lat;
+  //lat2 = position_array[min_index][0];
+  lat2 = position_array[random_index][0];
+  lon1 = my_long;
+  //lon2 = position_array[min_index][1];
+  lon2 = position_array[random_index][1];
+
+  var dLat = (lat2-lat1).toRad();
+  var dLon = (lon2-lon1).toRad();
+  var lat1 = lat1.toRad();
+  var lat2 = lat2.toRad();
+
+  var y = Math.sin(dLon) * Math.cos(lat2);
+  var x = Math.cos(lat1)*Math.sin(lat2) -
+          Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);
+  var brng = Math.atan2(y, x).toDeg();
+
+  console.log('brng=' +brng);
+
+  placeMarker(map.getCenter(), brng);
+
+  //function
+  function placeMarker(location, rotation) {
+    var marker = new google.maps.Marker({
+      position: location,
+      icon: {
+        path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+        scale: 7,
+        //fillColor:
+        //fillOpacity:
+        //https://developers.google.com/maps/documentation/javascript/symbols
+        rotation: rotation
+      },
+      draggable: false,
+      map: map
+    });
+  }
 
 }
 
