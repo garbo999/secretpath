@@ -22,7 +22,49 @@ src="http://maps.googleapis.com/maps/api/js">
 
 <script>
 var my_lat, my_long;
-var dest_lat_1, dest_long_1;
+//var dest_lat_1, dest_long_1;
+
+// insert new destination information here
+// position_array[0][0] --> position 1 latitude
+// position_array[0][1] --> position 1 longitude
+// etc.
+var position_array = [
+    [58.38432, 24.49296, 'vallikaar', 'picture link'], // destination 1
+    [58.37641, 24.47798, 'spit', 'picture link'], // destination 1
+    [58.38053, 24.49229, 'amanda villa', 'picture link'], // destination 1
+    [58.37859, 24.50497, 'villa ene', 'picture link'], // destination 1
+    [58.38267, 24.48776, 'spa tervis', 'picture link'], // destination 1
+];
+
+
+/**
+ * Returns a random integer between min (inclusive) and max (inclusive)
+ * Using Math.round() will give you a non-uniform distribution!
+ */
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+  var R = 6371; // Radius of the earth in km
+  var dLat = deg2rad(lat2-lat1);  // deg2rad below
+  var dLon = deg2rad(lon2-lon1); 
+  var a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2)
+    ; 
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  var d = R * c; // Distance in km
+  return d;
+}
+
+function deg2rad(deg) {
+  return deg * (Math.PI/180)
+}
+
+
+
 
 /*var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
 var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
@@ -67,16 +109,27 @@ function initialize(position) {
 
   my_lat = position.coords.latitude;
   my_long = position.coords.longitude;
-/*
-  dest_lat_1 = my_lat * .9999;
-  dest_long_1 = my_long * .9999;*/
 
-  dest_lat_2 = 58.38432; // Vallikaar
-  dest_long_2 = 24.49296;
+
+  var s;
+  var distance_array = new Array();
+  var min_index;
+  for (i = 0; i < position_array.length; i++) {
+      distance_array.push(getDistanceFromLatLonInKm(my_lat,my_long,position_array[i][0],position_array[i][1]));
+  }
+
+  var min_index = distance_array.indexOf(Math.min.apply(Math, distance_array));
+  var random_index = getRandomInt(0, distance_array.length-1);
+
+  console.log(distance_array);
+  console.log('min_index=', min_index);
+  console.log('random_index=', random_index);
+
+
 
   var myCenter=new google.maps.LatLng(my_lat, my_long);
-/*  var myPos1=new google.maps.LatLng(dest_lat_1, dest_long_1);
-*/  var myPos2=new google.maps.LatLng(dest_lat_2, dest_long_2);
+  var myPos2=new google.maps.LatLng(position_array[random_index][0], position_array[random_index][1]); // for testing
+  //var myPos2=new google.maps.LatLng(position_array[min_index][0], position_array[min_index][1]);
 
   // ddkdkdkd
 
@@ -96,19 +149,12 @@ function initialize(position) {
     icon:'pinkball.png'
     //icon:'safe_image.png'
   });
-/*  var marker1=new google.maps.Marker({
-    position:myPos1,
-  });
-*/  var marker2=new google.maps.Marker({
+  var marker1=new google.maps.Marker({
     position:myPos2,
   });
 
   marker.setMap(map);
-  //marker1.setMap(map);
-  marker2.setMap(map);
-
-  console.log("getBounds"+map.getBounds);
-
+  marker1.setMap(map);
 
   var bounds = new google.maps.LatLngBounds();
   bounds.extend(myCenter);
