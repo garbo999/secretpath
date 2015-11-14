@@ -7,10 +7,16 @@ src="http://maps.googleapis.com/maps/api/js">
 
 <script>
 var my_lat, my_long;
+var dest_lat_1, dest_long_1;
+
+var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
+var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+
+console.log(w + "," + h);
 
 function getLocation() {
   if (navigator.geolocation) {
-      navigator.geolocation.watchPosition(initialize);
+      navigator.geolocation.getCurrentPosition(initialize);
   } else {
       x.innerHTML = "Geolocation is not supported by this browser.";
   }
@@ -21,10 +27,15 @@ function initialize(position) {
   my_lat = position.coords.latitude;
   my_long = position.coords.longitude;
 
-/*  dest_lat_1 = 
-  dest_long_1 = 
-*/
+  dest_lat_1 = my_lat * .9999;
+  dest_long_1 = my_long * .9999;
+
+  dest_lat_2 = 58.382388;
+  dest_long_2 = 24.5017866;
+
   var myCenter=new google.maps.LatLng(my_lat, my_long);
+  var myPos1=new google.maps.LatLng(dest_lat_1, dest_long_1);
+  var myPos2=new google.maps.LatLng(dest_lat_2, dest_long_2);
 
   var mapProp = {
     center:myCenter,
@@ -37,8 +48,16 @@ function initialize(position) {
   var marker=new google.maps.Marker({
     position:myCenter,
   });
+  var marker1=new google.maps.Marker({
+    position:myPos1,
+  });
+  var marker2=new google.maps.Marker({
+    position:myPos2,
+  });
 
   marker.setMap(map);
+  marker1.setMap(map);
+  marker2.setMap(map);
 }
 
 google.maps.event.addDomListener(window, 'load', getLocation);
@@ -46,6 +65,6 @@ google.maps.event.addDomListener(window, 'load', getLocation);
 </head>
 
 <body>
-<div id="googleMap" style="width:500px;height:380px;"></div>
+<div id="googleMap" style="width:700px;height:380px;"></div>
 </body>
 </html>
