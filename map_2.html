@@ -5,6 +5,7 @@
     #googleMap {
       width:100vw;
       height:100vh;}
+      
     .gm-style img {
       -webkit-filter: grayscale(100%);
       -moz-filter: grayscale(100%);
@@ -30,7 +31,7 @@ console.log(w + "," + h);
 
 function getLocation() {
   if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(initialize);
+      navigator.geolocation.watchPosition(initialize);
   } else {
       x.innerHTML = "Geolocation is not supported by this browser.";
   }
