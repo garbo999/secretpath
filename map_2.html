@@ -83,7 +83,8 @@ function initialize(position) {
   var mapProp = {
     center:myCenter,
     zoom:14,
-    mapTypeId:google.maps.MapTypeId.ROADMAP
+    mapTypeId:google.maps.MapTypeId.ROADMAP,
+    zoomControl: false
   };
 
   var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
