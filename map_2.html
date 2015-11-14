@@ -5,7 +5,7 @@
     #googleMap {
       width:100vw;
       height:100vh;}
-      
+
     .gm-style img {
       -webkit-filter: grayscale(100%);
       -moz-filter: grayscale(100%);
@@ -38,6 +38,9 @@ function getLocation() {
 }
 
 function initialize(position) {
+  var x = document.getElementById("demo");
+
+  x.innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude;  
 
   my_lat = position.coords.latitude;
   my_long = position.coords.longitude;
@@ -83,6 +86,7 @@ google.maps.event.addDomListener(window, 'load', getLocation);
 </head>
 
 <body>
-<div id="googleMap"></div>
+  <p id="demo"></p>
+  <div id="googleMap"></div>
 </body>
 </html>
