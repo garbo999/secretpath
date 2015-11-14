@@ -6,26 +6,42 @@ src="http://maps.googleapis.com/maps/api/js">
 </script>
 
 <script>
-var myCenter=new google.maps.LatLng(51.508742,-0.120850);
+var my_lat, my_long;
 
-function initialize()
-{
-var mapProp = {
-  center:myCenter,
-  zoom:5,
-  mapTypeId:google.maps.MapTypeId.ROADMAP
-  };
-
-var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
-
-var marker=new google.maps.Marker({
-  position:myCenter,
-  });
-
-marker.setMap(map);
+function getLocation() {
+  if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(initialize);
+  } else {
+      x.innerHTML = "Geolocation is not supported by this browser.";
+  }
 }
 
-google.maps.event.addDomListener(window, 'load', initialize);
+function initialize(position) {
+
+  my_lat = position.coords.latitude;
+  my_long = position.coords.longitude;
+
+/*  dest_lat_1 = 
+  dest_long_1 = 
+*/
+  var myCenter=new google.maps.LatLng(my_lat, my_long);
+
+  var mapProp = {
+    center:myCenter,
+    zoom:15,
+    mapTypeId:google.maps.MapTypeId.ROADMAP
+  };
+
+  var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+
+  var marker=new google.maps.Marker({
+    position:myCenter,
+  });
+
+  marker.setMap(map);
+}
+
+google.maps.event.addDomListener(window, 'load', getLocation);
 </script>
 </head>
 
