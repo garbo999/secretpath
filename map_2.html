@@ -22,8 +22,9 @@ src="http://maps.googleapis.com/maps/api/js">
 
 <script>
 var TEST_MODE_PAR='testing';//if testing mode is 'true' then your location is fixed
-var DEST_ID_PAR='destId';//destination parameter
-var CITY_ID_PAR='cityId';//city where to play parameter
+var DEST_ID_PAR='destId';//destination parameter is where you want to play is it parnu or tallinn
+var CITY_ID_PAR='cityId';//city id is where are YOU positioned!
+var FIND_DESTIN='indexMode';// values random_index, min_index, destId
 var marker;
 /*var test_mode = false;
 var test_mode = true;
@@ -43,13 +44,13 @@ var parnu_pos =
     [58.37859, 24.50497, 'Villa Ene', 'picture link', 'Palju õnne leidsite Villa Ene!'], // villa ene
     [58.38267, 24.48776, 'Spa tervis', 'picture link', 'Palju õnne leidsite Spa tervise keskuse!'], // spa tervis
   ];
- var tallinn_pos = [
-    [59.4371997, 24.7452441, 'Raekoja plats', 'picture link', 'Palju õnne olete jõudnud Raekoja platsi!'], // Raekoja plats
-    [59.43727476, 24.74703938, 'Meistrite Hoov', 'picture link', 'Palju õnne olete jõudnud Meistrite hoovi!'], // Meistrite Hoov
-    [59.43832764, 24.74351496, 'Nukuteater ja muuseum', 'picture link', 'Palju õnne olete leidnud Nukuteatri ja muuseumi!'], // Eesti Riiklik Nukuteater
-    [59.4357172, 24.7435686, 'Harju Tänava Uisuplats', 'picture link', 'Palju õnne olete leidnud Harju Tänava Uisuplatsi!'], // Harju Tänava Uisuplats
-    [59.43718202, 24.74771529, 'Pierre Chocolaterie', 'picture link', 'Palju õnne olete leidnud Pierre šhokolaadi kohviku!'] // Pierre Chocolaterie
-  ];
+var tallinn_pos = [
+  [59.4371997, 24.7452441, 'Raekoja plats', 'picture link', 'Palju õnne olete jõudnud Raekoja platsi!'], // Raekoja plats
+  [59.43727476, 24.74703938, 'Meistrite Hoov', 'picture link', 'Palju õnne olete jõudnud Meistrite hoovi!'], // Meistrite Hoov
+  [59.43832764, 24.74351496, 'Nukuteater ja muuseum', 'picture link', 'Palju õnne olete leidnud Nukuteatri ja muuseumi!'], // Eesti Riiklik Nukuteater
+  [59.4357172, 24.7435686, 'Harju Tänava Uisuplats', 'picture link', 'Palju õnne olete leidnud Harju Tänava Uisuplatsi!'], // Harju Tänava Uisuplats
+  [59.43718202, 24.74771529, 'Pierre Chocolaterie', 'picture link', 'Palju õnne olete leidnud Pierre šhokolaadi kohviku!'] // Pierre Chocolaterie
+];
 
 var city_array = [
   [58.38502, 24.48900], // parnu college
@@ -78,7 +79,9 @@ if(destId === undefined) {
 var cityId = parseInt(getParameterByName(CITY_ID_PAR));
 if(city_array[cityId] === undefined) {
   cityId = 0; // Parnu by default
-}
+}else if(cityId==1){
+  cityId = 1;
+}  
 console.log(CITY_ID_PAR,'=', cityId);
 
 var testMode = getParameterByName(TEST_MODE_PAR);
@@ -86,7 +89,7 @@ if(testMode != 'true' && testMode != 'false') {
   testMode = 'false';
 }
 
-var indexMode = getParameterByName('indexMode');
+var indexMode = getParameterByName(FIND_DESTIN);
 if(indexMode != 'random_index' && indexMode != 'min_index' && indexMode != 'destId') {
   indexMode = 'min_index';
 }
