@@ -40,7 +40,7 @@ var position_array = [
 
 var city_array = [
   [58.38502, 24.48900], // parnu
-  [58.38502, 24.48900] // parnu
+  [58.38502, 24.48900] // tallinn
 ];
 
 function getParameterByName(name) {
@@ -63,6 +63,11 @@ console.log('cityId=', cityId);
 var testMode = getParameterByName('testMode');
 if(testMode != 'true' && testMode != 'false') {
   testMode = 'false';
+}
+
+var indexMode = getParameterByName('indexMode');
+if(indexMode != 'random_index' && indexMode != 'min_index' && indexMode != 'destId') {
+  indexMode = 'min_index';
 }
 
 
@@ -159,11 +164,21 @@ function initialize(position) {
   var min_index = distance_array.indexOf(Math.min.apply(Math, distance_array));
   var random_index = getRandomInt(0, distance_array.length-1);
 
-  // desired_index is a parameter:
-  //    min_index --> choose closest destination
+  // desired_index is a parameter set in the URL:
+  //    min_index --> (choose closest destination)
   //    random_index --> choose random destination
   //    destId --> choose destination id from parameters in URL string
-  var desired_index = destId; // three choices: min_index, random_index or destId
+  var desired_index; // three choices: min_index, random_index or destId
+  
+  if (indexMode == 'random_index') {
+    desired_index = random_index;
+  } else if (indexMode == 'min_index') {
+    desired_index = min_index;
+  } else if (indexMode == 'destId') {
+    desired_index = destId;
+  } else {
+    desired_index = min_index;
+  } 
 
   // DEBUGGING
   console.log(distance_array);
@@ -171,6 +186,7 @@ function initialize(position) {
   console.log('random_index=', random_index);
   console.log('destId=', destId);
   console.log('testMode=', testMode);
+  console.log('indexMode=', indexMode);
   console.log('my_lat=', my_lat);
   console.log('my_long=', my_long);
   // DEBUGGING
