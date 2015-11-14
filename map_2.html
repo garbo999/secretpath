@@ -88,6 +88,7 @@ function initialize(position) {
   };
 
   var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+  map.setOptions({draggable: false, zoomControl: false, scrollwheel: false, disableDoubleClickZoom: true});
 
   var marker=new google.maps.Marker({
     position:myCenter,
