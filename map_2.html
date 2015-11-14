@@ -22,21 +22,48 @@ src="http://maps.googleapis.com/maps/api/js">
 
 <script>
 var marker;
+/*var test_mode = false;
 var test_mode = true;
-var test_mode = false;
-
+*/
 var my_lat, my_long;
 
 // destination array
 // position_array[0][0] --> position 1 latitude
 // position_array[0][1] --> position 1 longitude etc.
 var position_array = [
-    [58.38432, 24.49296, 'vallikaar', 'picture link'], // destination 1
-    [58.37641, 24.47798, 'spit', 'picture link'], // destination 1
-    [58.38053, 24.49229, 'amanda villa', 'picture link'], // destination 1
-    [58.37859, 24.50497, 'villa ene', 'picture link'], // destination 1
-    [58.38267, 24.48776, 'spa tervis', 'picture link'], // destination 1
+  [58.38432, 24.49296, 'vallikaar', 'picture link'], // destination 1
+  [58.37641, 24.47798, 'spit', 'picture link'], // destination 1
+  [58.38053, 24.49229, 'amanda villa', 'picture link'], // destination 1
+  [58.37859, 24.50497, 'villa ene', 'picture link'], // destination 1
+  [58.38267, 24.48776, 'spa tervis', 'picture link'], // destination 1
 ];
+
+var city_array = [
+  [58.38502, 24.48900], // parnu
+  [58.38502, 24.48900] // parnu
+];
+
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+var destId = getParameterByName('destId');
+if(position_array[destId] === undefined) {
+  destId = 0;
+}
+var cityId = parseInt(getParameterByName('cityId'));
+if(city_array[cityId] === undefined) {
+  cityId = 0; // Parnu by default
+}
+console.log('cityId=', cityId);
+
+var testMode = getParameterByName('testMode');
+if(testMode != 'true' && testMode != 'false') {
+  testMode = 'false';
+}
 
 
 if (typeof(Number.prototype.toRad) === "undefined") {
@@ -110,13 +137,13 @@ function errorCallback(error) {
 function initialize(position) {
   var x = document.getElementById("demo");
 
-  if (test_mode) {
+  if (testMode == "true") {
     x.innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude; 
   }
 
-  if (test_mode) {
-    my_lat = position.coords.latitude;
-    my_long = position.coords.longitude;
+  if (testMode == "true") {
+    my_lat = city_array[cityId][0];
+    my_long = city_array[cityId][1];
   } else {
     my_lat = position.coords.latitude;
     my_long = position.coords.longitude;
@@ -132,17 +159,26 @@ function initialize(position) {
   var min_index = distance_array.indexOf(Math.min.apply(Math, distance_array));
   var random_index = getRandomInt(0, distance_array.length-1);
 
+  // desired_index is a parameter:
+  //    min_index --> choose closest destination
+  //    random_index --> choose random destination
+  //    destId --> choose destination id from parameters in URL string
+  var desired_index = destId; // three choices: min_index, random_index or destId
 
   // DEBUGGING
   console.log(distance_array);
   console.log('min_index=', min_index);
   console.log('random_index=', random_index);
+  console.log('destId=', destId);
+  console.log('testMode=', testMode);
+  console.log('my_lat=', my_lat);
+  console.log('my_long=', my_long);
   // DEBUGGING
 
 
 
   var myCenter=new google.maps.LatLng(my_lat, my_long);
-  var myPos2=new google.maps.LatLng(position_array[random_index][0], position_array[random_index][1]); // for testing
+  var myPos2=new google.maps.LatLng(position_array[desired_index][0], position_array[desired_index][1]); // for testing
   //var myPos2=new google.maps.LatLng(position_array[min_index][0], position_array[min_index][1]);
 
   var mapProp = {
@@ -177,7 +213,7 @@ function initialize(position) {
   map.fitBounds(bounds);
 
   var infowindow = new google.maps.InfoWindow({
-    content: position_array[random_index][2]
+    content: position_array[desired_index][2]
     });
 
   infowindow.open(map,marker1);
@@ -185,8 +221,8 @@ function initialize(position) {
 
   lat1 = my_lat;
   lon1 = my_long;
-  lat2 = position_array[random_index][0];
-  lon2 = position_array[random_index][1];
+  lat2 = position_array[desired_index][0];
+  lon2 = position_array[desired_index][1];
   //lat2 = position_array[min_index][0];
   //lon2 = position_array[min_index][1];
 
