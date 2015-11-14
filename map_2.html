@@ -21,13 +21,15 @@ src="http://maps.googleapis.com/maps/api/js">
 </script>
 
 <script>
-var my_lat, my_long;
-//var dest_lat_1, dest_long_1;
+var marker;
+var test_mode = true;
+var test_mode = false;
 
-// insert new destination information here
+var my_lat, my_long;
+
+// destination array
 // position_array[0][0] --> position 1 latitude
-// position_array[0][1] --> position 1 longitude
-// etc.
+// position_array[0][1] --> position 1 longitude etc.
 var position_array = [
     [58.38432, 24.49296, 'vallikaar', 'picture link'], // destination 1
     [58.37641, 24.47798, 'spit', 'picture link'], // destination 1
@@ -42,7 +44,6 @@ if (typeof(Number.prototype.toRad) === "undefined") {
     return this * Math.PI / 180;
   }
 }
-
 if (typeof(Number.prototype.toDeg) === "undefined") {
   Number.prototype.toDeg = function() {
     return this * 180 / Math.PI;
@@ -75,14 +76,6 @@ function deg2rad(deg) {
   return deg * (Math.PI/180)
 }
 
-
-
-
-/*var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0)
-var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
-*/
-/*console.log(w + "," + h);
-*/
 var options = {
   enableHighAccuracy: false,
   timeout: 1000,
@@ -117,13 +110,19 @@ function errorCallback(error) {
 function initialize(position) {
   var x = document.getElementById("demo");
 
-  x.innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude;  
+  if (test_mode) {
+    x.innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude; 
+  }
 
-  my_lat = position.coords.latitude;
-  my_long = position.coords.longitude;
+  if (test_mode) {
+    my_lat = position.coords.latitude;
+    my_long = position.coords.longitude;
+  } else {
+    my_lat = position.coords.latitude;
+    my_long = position.coords.longitude;
+  }
 
 
-  var s;
   var distance_array = new Array();
   var min_index;
   for (i = 0; i < position_array.length; i++) {
@@ -133,17 +132,18 @@ function initialize(position) {
   var min_index = distance_array.indexOf(Math.min.apply(Math, distance_array));
   var random_index = getRandomInt(0, distance_array.length-1);
 
+
+  // DEBUGGING
   console.log(distance_array);
   console.log('min_index=', min_index);
   console.log('random_index=', random_index);
+  // DEBUGGING
 
 
 
   var myCenter=new google.maps.LatLng(my_lat, my_long);
   var myPos2=new google.maps.LatLng(position_array[random_index][0], position_array[random_index][1]); // for testing
   //var myPos2=new google.maps.LatLng(position_array[min_index][0], position_array[min_index][1]);
-
-  // ddkdkdkd
 
   var mapProp = {
     center:myCenter,
@@ -161,7 +161,10 @@ function initialize(position) {
     icon:'pinkball.png'
     //icon:'safe_image.png'
   });
-*/  var marker1=new google.maps.Marker({
+*/  
+
+  // destination position
+  var marker1=new google.maps.Marker({
     position:myPos2,
   });
 
@@ -173,13 +176,19 @@ function initialize(position) {
   bounds.extend(myPos2);
   map.fitBounds(bounds);
 
+  var infowindow = new google.maps.InfoWindow({
+    content: position_array[random_index][2]
+    });
+
+  infowindow.open(map,marker1);
+
 
   lat1 = my_lat;
-  //lat2 = position_array[min_index][0];
-  lat2 = position_array[random_index][0];
   lon1 = my_long;
-  //lon2 = position_array[min_index][1];
+  lat2 = position_array[random_index][0];
   lon2 = position_array[random_index][1];
+  //lat2 = position_array[min_index][0];
+  //lon2 = position_array[min_index][1];
 
   var dLat = (lat2-lat1).toRad();
   var dLon = (lon2-lon1).toRad();
@@ -191,13 +200,14 @@ function initialize(position) {
           Math.sin(lat1)*Math.cos(lat2)*Math.cos(dLon);
   var brng = Math.atan2(y, x).toDeg();
 
+  // DEBUGGING
   console.log('brng=' +brng);
 
   placeMarker(map.getCenter(), brng);
 
   //function
   function placeMarker(location, rotation) {
-    var marker = new google.maps.Marker({
+    marker = new google.maps.Marker({
       position: location,
       icon: {
         path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
@@ -211,6 +221,15 @@ function initialize(position) {
       map: map
     });
   }
+
+  // this could be used to display an infowindow for the user location
+/*  var infowindow = new google.maps.InfoWindow({
+    content: "some text here"
+    });
+
+  infowindow.open(map,marker);
+*/
+
 
 }
 
