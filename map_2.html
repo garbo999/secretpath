@@ -21,6 +21,9 @@ src="http://maps.googleapis.com/maps/api/js">
 </script>
 
 <script>
+var TEST_MODE_PAR='testing';//if testing mode is 'true' then your location is fixed
+var DEST_ID_PAR='destId';//destination parameter
+var CITY_ID_PAR='cityId';//city where to play parameter
 var marker;
 /*var test_mode = false;
 var test_mode = true;
@@ -28,19 +31,29 @@ var test_mode = true;
 var my_lat, my_long;
 
 // destination array
-// position_array[0][0] --> position 1 latitude
-// position_array[0][1] --> position 1 longitude etc.
-var position_array = [
-  [58.38432, 24.49296, 'vallikaar', 'picture link'], // destination 1
-  [58.37641, 24.47798, 'spit', 'picture link'], // destination 1
-  [58.38053, 24.49229, 'amanda villa', 'picture link'], // destination 1
-  [58.37859, 24.50497, 'villa ene', 'picture link'], // destination 1
-  [58.38267, 24.48776, 'spa tervis', 'picture link'], // destination 1
-];
+// position_array[0][0] --> position 1 destination 0 (P'rnu latitude
+// position_array[0][1] --> position 1 destination 1 Tallinn  longitude etc.
+var position_array;
+// long, lat, name description, picture, landing QRI text
+var parnu_pos = 
+  [
+    [58.38432, 24.49296, 'Vallikaar', 'picture link', 'Palju õnne leidsite Vallikaare!'], // vallikaar
+    [58.37641, 24.47798, 'Spit', 'picture link', 'Palju õnne leidsite Pärnu sadama!'], // spit
+    [58.38053, 24.49229, 'Amanda Villa', 'picture link', 'Palju õnne leidsite Amanda Villa!'], // amanda villa
+    [58.37859, 24.50497, 'Villa Ene', 'picture link', 'Palju õnne leidsite Villa Ene!'], // villa ene
+    [58.38267, 24.48776, 'Spa tervis', 'picture link', 'Palju õnne leidsite Spa tervise keskuse!'], // spa tervis
+  ];
+ var tallinn_pos = [
+    [59.4371997, 24.7452441, 'Raekoja plats', 'picture link', 'Palju õnne olete jõudnud Raekoja platsi!'], // Raekoja plats
+    [59.43727476, 24.74703938, 'Meistrite Hoov', 'picture link', 'Palju õnne olete jõudnud Meistrite hoovi!'], // Meistrite Hoov
+    [59.43832764, 24.74351496, 'Nukuteater ja muuseum', 'picture link', 'Palju õnne olete leidnud Nukuteatri ja muuseumi!'], // Eesti Riiklik Nukuteater
+    [59.4357172, 24.7435686, 'Harju Tänava Uisuplats', 'picture link', 'Palju õnne olete leidnud Harju Tänava Uisuplatsi!'], // Harju Tänava Uisuplats
+    [59.43718202, 24.74771529, 'Pierre Chocolaterie', 'picture link', 'Palju õnne olete leidnud Pierre šhokolaadi kohviku!'] // Pierre Chocolaterie
+  ];
 
 var city_array = [
-  [58.38502, 24.48900], // parnu
-  [58.38502, 24.48900] // tallinn
+  [58.38502, 24.48900], // parnu college
+  [59.4371997, 24.7452441] // tallinn raekoja plats
 ];
 
 function getParameterByName(name) {
@@ -50,17 +63,25 @@ function getParameterByName(name) {
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
-var destId = getParameterByName('destId');
-if(position_array[destId] === undefined) {
+var destId = getParameterByName(DEST_ID_PAR);
+// if not defined then Parnu
+if(destId === undefined) {
   destId = 0;
-}
-var cityId = parseInt(getParameterByName('cityId'));
+  position_array = parnu_pos;
+  // if 1 then tallinn
+}else if (destId==1){
+   position_array = tallinn_pos; 
+}else{
+  // was still parnu
+  position_array = parnu_pos;
+}  
+var cityId = parseInt(getParameterByName(CITY_ID_PAR));
 if(city_array[cityId] === undefined) {
   cityId = 0; // Parnu by default
 }
-console.log('cityId=', cityId);
+console.log(CITY_ID_PAR,'=', cityId);
 
-var testMode = getParameterByName('testMode');
+var testMode = getParameterByName(TEST_MODE_PAR);
 if(testMode != 'true' && testMode != 'false') {
   testMode = 'false';
 }
@@ -89,7 +110,7 @@ if (typeof(Number.prototype.toDeg) === "undefined") {
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
+ 
 function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
   var R = 6371; // Radius of the earth in km
   var dLat = deg2rad(lat2-lat1);  // deg2rad below
@@ -141,15 +162,16 @@ function errorCallback(error) {
 
 function initialize(position) {
   var x = document.getElementById("demo");
-
+  // if testing mode then show your location parameters in html
   if (testMode == "true") {
-    x.innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude; 
+    // x.innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude; 
   }
-
+  // if testing mode is true then take your location by city ID
   if (testMode == "true") {
     my_lat = city_array[cityId][0];
     my_long = city_array[cityId][1];
   } else {
+    // take your location automatically
     my_lat = position.coords.latitude;
     my_long = position.coords.longitude;
   }
@@ -190,8 +212,6 @@ function initialize(position) {
   console.log('my_lat=', my_lat);
   console.log('my_long=', my_long);
   // DEBUGGING
-
-
 
   var myCenter=new google.maps.LatLng(my_lat, my_long);
   var myPos2=new google.maps.LatLng(position_array[desired_index][0], position_array[desired_index][1]); // for testing
