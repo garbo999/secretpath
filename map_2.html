@@ -253,6 +253,9 @@ function initialize(position) {
   bounds.extend(myPos2);
   map.fitBounds(bounds);
 
+  console.log(myPos2.lat());
+  console.log(myPos2.lng());
+
   var infowindow = new google.maps.InfoWindow({
     content: position_array[desired_index][2]
     });
